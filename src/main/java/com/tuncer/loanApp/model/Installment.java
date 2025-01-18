@@ -24,7 +24,9 @@ public class Installment {
 
     private int installmentNumber;
     private double amount;
+    private double paidAmount;
     private LocalDate dueDate;
+    private LocalDate paymentDate;
     private boolean paid;
 
 }

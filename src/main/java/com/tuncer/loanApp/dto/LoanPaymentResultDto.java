@@ -11,7 +11,6 @@ public class LoanPaymentResultDto extends ResponseDto{
     private double remainingAmount;
     private double paidAmount;
     private int numberOfInstallmentsPaid;
-    private double remainingLoanAmount;
     private int remainingNumberOfInstallmentsToBePaid;
 
 }

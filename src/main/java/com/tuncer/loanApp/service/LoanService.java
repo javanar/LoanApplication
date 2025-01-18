@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import static com.tuncer.loanApp.querySpecification.LoanSpecification.byCustomer;
@@ -69,7 +70,6 @@ public class LoanService {
 
         Loan loan = new Loan();
         loan.setOriginalAmount(loanTotalAmount);
-        loan.setRemainingAmount(loanTotalAmount);
         loan.setRequestedAmount(loanCreateDto.getAmount());
         loan.setCustomer(savedCustomer);
         loan.setInterestRate(loanCreateDto.getInterestRate());
@@ -111,7 +111,6 @@ public class LoanService {
         int remainingInstallmentsToBePaid = installmentRepository.findAllByPaidAndLoan_LoanId(false, loanId).size();
 
         if (installmentPaymentResultDto.getNumberOfPaidInstallments() > 0) {
-            loan.setRemainingAmount(loan.getRemainingAmount() - installmentPaymentResultDto.getPaidAmount());
             if (remainingInstallmentsToBePaid == 0) {
                 loan.setPaid(true);
             }
@@ -121,8 +120,7 @@ public class LoanService {
             loanRepository.save(loan);
         }
 
-        return getLoanPaymentResultDto(installmentPaymentResultDto, startingAmount, loan.getRemainingAmount(),
-                remainingInstallmentsToBePaid);
+        return getLoanPaymentResultDto(installmentPaymentResultDto, startingAmount, remainingInstallmentsToBePaid);
 
     }
 
@@ -193,6 +191,8 @@ public class LoanService {
                 }
 
                 installment.setPaid(true);
+                installment.setPaymentDate(LocalDate.now());
+                installment.setPaidAmount(installmentAmount);
                 paidInstallments++;
                 paidAmount += installmentAmount;
                 installmentRepository.save(installment);
@@ -207,14 +207,12 @@ public class LoanService {
     }
 
     private LoanPaymentResultDto getLoanPaymentResultDto(InstallmentPaymentResultDto installmentPaymentResultDto,
-                                                         double startingAmount, double remainingLoanAmount,
-                                                         int remainingInstallmentsToBePaid) {
+                                                         double startingAmount, int remainingInstallmentsToBePaid) {
         LoanPaymentResultDto loanPaymentResultDto = new LoanPaymentResultDto();
         loanPaymentResultDto.setPaidAmount(installmentPaymentResultDto.getPaidAmount());
         loanPaymentResultDto.setNumberOfInstallmentsPaid(installmentPaymentResultDto.getNumberOfPaidInstallments());
         loanPaymentResultDto.setStartingAmount(startingAmount);
         loanPaymentResultDto.setRemainingAmount(startingAmount - installmentPaymentResultDto.getPaidAmount());
-        loanPaymentResultDto.setRemainingLoanAmount(remainingLoanAmount);
         loanPaymentResultDto.setRemainingNumberOfInstallmentsToBePaid(remainingInstallmentsToBePaid);
         return loanPaymentResultDto;
     }
@@ -226,14 +224,12 @@ public class LoanService {
             return amount;
         }
 
-        Period period = Period.between(today, dueDate);
-        int numberOfDays = period.getDays();
+        long numberOfDays = ChronoUnit.DAYS.between(today, dueDate);
 
-        ;
         if (today.isBefore(dueDate)) {
-            return amount - amount * PRICE_PENALTY_FACTOR * numberOfDays;
+            return amount - (amount * PRICE_PENALTY_FACTOR * numberOfDays);
         } else {
-            return amount + amount * PRICE_PENALTY_FACTOR * numberOfDays;
+            return amount + (amount * PRICE_PENALTY_FACTOR * numberOfDays);
         }
 
     }

@@ -21,7 +21,6 @@ public class Loan {
     private Customer customer;
 
     private double originalAmount;
-    private double remainingAmount;
     private double requestedAmount;
     private float interestRate;
     private int numberOfInstallments;

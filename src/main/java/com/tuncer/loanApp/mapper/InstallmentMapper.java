@@ -12,6 +12,7 @@ public interface InstallmentMapper {
     InstallmentMapper INSTANCE = Mappers.getMapper(InstallmentMapper.class);
 
     @Mapping(source = "loan.loanId", target = "loanId")
+    @Mapping(source = "paidAmount", target = "paidAmount")
     InstallmentDto installmentToInstallmentDto(Installment installment);
 
 }

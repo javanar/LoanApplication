@@ -10,7 +10,6 @@ public class LoanDto extends ResponseDto{
     private int loanId;
     private CustomerDto customer;
     private double originalAmount;
-    private double remainingAmount;
     private double requestedAmount;
     private float interestRate;
     private int numberOfInstallments;

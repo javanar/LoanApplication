@@ -40,7 +40,6 @@ public class InstallmentRepositoryTest {
         loan.setNumberOfInstallments(12);
         loan.setInterestRate(0.2f);
         loan.setRequestedAmount(1000);
-        loan.setRemainingAmount(1200);
         loan = loanRepository.save(loan);
 
         Installment installment = new Installment();
@@ -70,7 +69,6 @@ public class InstallmentRepositoryTest {
         loan.setNumberOfInstallments(12);
         loan.setInterestRate(0.2f);
         loan.setRequestedAmount(1000);
-        loan.setRemainingAmount(1200);
         loan = loanRepository.save(loan);
 
         Installment installment = new Installment();
@@ -101,7 +99,6 @@ public class InstallmentRepositoryTest {
         loan.setNumberOfInstallments(12);
         loan.setInterestRate(0.2f);
         loan.setRequestedAmount(1000);
-        loan.setRemainingAmount(1200);
         loan = loanRepository.save(loan);
 
         Installment installment = new Installment();

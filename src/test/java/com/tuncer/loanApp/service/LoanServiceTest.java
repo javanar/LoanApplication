@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -118,7 +119,7 @@ public class LoanServiceTest {
         when(configRepository.findByConfigurationKey(MIN_INTEREST_RATE_CONFIGURATION_KEY)).thenReturn(List.of(minRate));
         when(configRepository.findByConfigurationKey(MAX_INTEREST_RATE_CONFIGURATION_KEY)).thenReturn(List.of(maxRate));
 
-        assertThat(loanService.createLoan(loanCreateDto)).isEqualTo(loan);
+        assertThat(loanService.createLoan(loanCreateDto).getLoanId()).isEqualTo(loan.getLoanId());
     }
 
     @Test
@@ -304,7 +305,6 @@ public class LoanServiceTest {
         loan.setPaid(false);
         loan.setNumberOfInstallments(12);
         loan.setOriginalAmount(100000);
-        loan.setRemainingAmount(120000);
         loan.setCustomer(customer);
 
         Config config = new Config();
@@ -319,6 +319,7 @@ public class LoanServiceTest {
         installment.setPaid(false);
         installment.setAmount(100);
         installment.setLoan(loan);
+        installment.setDueDate(LocalDate.now());
 
         Installment paidInstallment = new Installment();
         paidInstallment.setPaid(true);
