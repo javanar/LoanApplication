@@ -108,15 +108,21 @@ public class LoanService {
 
         InstallmentPaymentResultDto installmentPaymentResultDto = payInstallments(startingAmount, installments);
 
+        int remainingInstallmentsToBePaid = installmentRepository.findAllByPaidAndLoan_LoanId(false, loanId).size();
+
         if (installmentPaymentResultDto.getNumberOfPaidInstallments() > 0) {
             loan.setRemainingAmount(loan.getRemainingAmount() - installmentPaymentResultDto.getPaidAmount());
+            if (remainingInstallmentsToBePaid == 0) {
+                loan.setPaid(true);
+            }
             Customer customer = loan.getCustomer();
             customer.setCreditLimit(customer.getCreditLimit() + installmentPaymentResultDto.getPaidAmount());
             customerRepository.save(customer);
             loanRepository.save(loan);
         }
 
-        return getLoanPaymentResultDto(installmentPaymentResultDto, startingAmount, loan.getRemainingAmount(), loan.getLoanId());
+        return getLoanPaymentResultDto(installmentPaymentResultDto, startingAmount, loan.getRemainingAmount(),
+                remainingInstallmentsToBePaid);
 
     }
 
@@ -201,15 +207,15 @@ public class LoanService {
     }
 
     private LoanPaymentResultDto getLoanPaymentResultDto(InstallmentPaymentResultDto installmentPaymentResultDto,
-                                                         double startingAmount, double remainingLoanAmount, int loanId) {
+                                                         double startingAmount, double remainingLoanAmount,
+                                                         int remainingInstallmentsToBePaid) {
         LoanPaymentResultDto loanPaymentResultDto = new LoanPaymentResultDto();
         loanPaymentResultDto.setPaidAmount(installmentPaymentResultDto.getPaidAmount());
         loanPaymentResultDto.setNumberOfInstallmentsPaid(installmentPaymentResultDto.getNumberOfPaidInstallments());
         loanPaymentResultDto.setStartingAmount(startingAmount);
         loanPaymentResultDto.setRemainingAmount(startingAmount - installmentPaymentResultDto.getPaidAmount());
         loanPaymentResultDto.setRemainingLoanAmount(remainingLoanAmount);
-        loanPaymentResultDto.setRemainingNumberOfInstallmentsToBePaid(
-                installmentRepository.findAllByPaidAndLoan_LoanId(false, loanId).size());
+        loanPaymentResultDto.setRemainingNumberOfInstallmentsToBePaid(remainingInstallmentsToBePaid);
         return loanPaymentResultDto;
     }
 
