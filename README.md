@@ -24,10 +24,10 @@ Allows to list customers in database. <ins>**By default, 3 customers are inserte
 ## Database
 Database of the application consists of 4 tables, namely Config, Customer, Installment and Loan.
 
-Customer: id, name, surname, creditLimit. (Really sorry, I forgot to include usedCreditLimit field, I calculate the remaining credit lmit by manipulating the creditLimit field)
-Loan: id, customerId, loanAmount, numberOfInstallment, createDate, isPaid, interestRate (I also forgot to include crateDate field)
-Installment: id, loanId, amount, paidAmount, dueDate, paymentDate, isPaid, installmentNumber
-Config: configurationId, configurationKey, configurationValue, explanation
++ Customer: id, name, surname, creditLimit. (Really sorry, I forgot to include usedCreditLimit field, I calculate the remaining credit lmit by manipulating the creditLimit field)
++ Loan: id, customerId, loanAmount, numberOfInstallment, createDate, isPaid, interestRate (I also forgot to include crateDate field)
++ Installment: id, loanId, amount, paidAmount, dueDate, paymentDate, isPaid, installmentNumber
++ Config: configurationId, configurationKey, configurationValue, explanation
 
 ## Security
 All endpoints are authorized with a user and password. **There are 2 types of users (roles): admin and customer. Admin role can reach all endpoints via username: admin and passeord: admin. Customer role is allowed to reach only pay Loan and List installments for a given loan endpoints with username: customer and password: customer.**
